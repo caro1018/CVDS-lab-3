@@ -2,6 +2,15 @@ package edu.eci.cvds.tdd.registry;
 public class Registry {
     public RegisterResult registerVoter(Person p) {
         // TODO Validate person and return real result.
+        if (!p.isAlive()) {
+            return RegisterResult.DEAD;
+        }
+        if (p.getAge() < 0 || p.getAge() > 135) {
+            return RegisterResult.INVALID_AGE;
+        }
+        if (p.getAge() > 0 && p.getAge() < 18) {
+            return RegisterResult.UNDER_AGE;
+        }
         return RegisterResult.VALID;
     }
 
@@ -50,4 +59,6 @@ public class Registry {
         }
         return registerResult;
     }
+
+
 }

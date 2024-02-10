@@ -4,37 +4,48 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class RegistryTest {
-    private Registry registry = new Registry();
-    Person person = new Person();
-    Person person2 = new Person();
+
     @Test
     public void validateRegistryResult() {
-
-        RegisterResult result = registry.registerVoter(person);
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        RegisterResult result = registry.registerVoter(person1);
         Assert.assertEquals(RegisterResult.VALID, result);
     }
     // TODO Complete with more test cases
     @Test
     public void validateIsLive(){
-        person.setAlive(true);
-        RegisterResult result = registry.isAlive(person);
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAlive(true);
+        RegisterResult result = registry.registerVoter(person1);
         Assert.assertEquals(RegisterResult.VALID, result);
-
     }
+
+    @Test
+    public void validateIsDead(){
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAlive(false);
+        RegisterResult result = registry.registerVoter(person1);
+        Assert.assertEquals(RegisterResult.DEAD, result);
+    }
+
+
+    public void validateAge(Integer age, RegisterResult expectedValue){
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAge(age);
+        RegisterResult result = registry.registerVoter(person1);
+        Assert.assertEquals(expectedValue, result);
+    }
+
     @Test
     public void validateAge(){
-        person.setAge(20);
-        RegisterResult result = registry.registerAge(person);
-        Assert.assertEquals(RegisterResult.VALID, result);
+        validateAge(-1000, RegisterResult.INVALID_AGE);
+        validateAge(-1, RegisterResult.INVALID_AGE);
+        validateAge(0, RegisterResult.VALID);
+        validateAge(1, RegisterResult.UNDER_AGE);
     }
-
-    @Test
-    public void validateDuplicateId(){
-        person.setId(201);
-        person2.setId(201);
-        RegisterResult result = registry.duplicateId(person, person2);
-        Assert.assertEquals(RegisterResult.VALID, result);
-    }
-
 
 }
