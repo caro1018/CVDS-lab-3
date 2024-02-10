@@ -30,6 +30,8 @@ public class Person {
     public Person() {
         super();
         setAlive(true);
+        setAge(18);
+        setGender(Gender.MALE);
     }
     /**
      * A person constructor with all the information
