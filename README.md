@@ -50,6 +50,217 @@ Y compilamos/ejecutamos pruebas
 
 ## FINALIZAR EL EJERCICIO
 
+<p align="center">Implementación clase `RegistryTest.java` .</p>
+
+```java
+package edu.eci.cvds.tdd.registry;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class RegistryTest {
+
+    // TODO Complete with more test cases
+    @Test
+    public void validateRegistryResult() {
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAge(18);
+        person1.setId(1019153396);
+        RegisterResult result = registry.registerVoter(person1);
+        Assert.assertEquals(RegisterResult.VALID, result);
+    }
+
+    @Test
+    public void validateIsLive(){
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAlive(true);
+        person1.setId(1019153396);
+        RegisterResult result = registry.registerVoter(person1);
+        Assert.assertEquals(RegisterResult.VALID, result);
+    }
+
+    @Test
+    public void validateIsDead(){
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAlive(false);
+        RegisterResult result = registry.registerVoter(person1);
+        Assert.assertEquals(RegisterResult.DEAD, result);
+    }
+
+
+    public void validateAge(Integer age, RegisterResult expectedValue){
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setAge(age);
+        person1.setId(1019153396);
+        RegisterResult result = registry.registerVoter(person1);
+        Assert.assertEquals(expectedValue, result);
+    }
+
+    @Test
+    public void validateAge(){
+        validateAge(-1000, RegisterResult.INVALID_AGE);
+        validateAge(-1, RegisterResult.INVALID_AGE);
+        validateAge(0, RegisterResult.UNDER_AGE);
+        validateAge(1, RegisterResult.UNDER_AGE);
+        validateAge(17, RegisterResult.UNDER_AGE);
+        validateAge(18, RegisterResult.VALID);
+        validateAge(135, RegisterResult.VALID);
+        validateAge(136, RegisterResult.INVALID_AGE);
+        validateAge(10000, RegisterResult.INVALID_AGE);
+    }
+
+    @Test
+    public void validateCorrectID()
+    {
+        Registry registry = new Registry();
+        Person person = new Person();
+        person.setId(1019153396);
+        person.setGender(Gender.MALE);
+        RegisterResult result = registry.registerVoter(person);
+        Assert.assertEquals(RegisterResult.VALID, result);
+    }
+
+    @Test
+    public void validateIncorrectID()
+    {
+        Registry registry = new Registry();
+        Person person = new Person();
+        person.setGender(Gender.MALE);
+        RegisterResult result = registry.registerVoter(person);
+        Assert.assertEquals(RegisterResult.INVALID_ID, result);
+    }
+
+    @Test
+    public void validateUnidentifiedGender()
+    {
+        Registry registry = new Registry();
+        Person person = new Person();
+        person.setId(1019153396);
+        person.setGender(Gender.FEMALE);
+        RegisterResult result = registry.registerVoter(person);
+        Assert.assertEquals(RegisterResult.VALID, result);
+    }
+
+    @Test
+    public void validateDuplicate()
+    {
+        Registry registry = new Registry();
+        Person person1 = new Person();
+        person1.setId(1019153396);
+
+        Person person2 = new Person();
+        person2.setId(1019153396);
+
+        RegisterResult result = registry.registerVoter(person1);
+        RegisterResult result2 = registry.registerVoter(person2);
+
+        Assert.assertEquals(RegisterResult.DUPLICATED, result2);
+    }
+
+}
+```
+<p align="center">Implementación método `registerVoter` en la clase `Registry.java` .</p>
+
+
+```java
+package edu.eci.cvds.tdd.registry;
+import java.util.HashMap;
+
+public class Registry {
+    private HashMap<Integer,Person> voters;
+
+    public Registry()
+    {
+        voters = new HashMap<Integer,Person>();
+    }
+
+    public RegisterResult registerVoter(Person p)
+    {
+        // TODO Validate person and return real result.
+        //Alive
+        if (!p.isAlive()) {
+            return RegisterResult.DEAD;
+        }
+        //Age
+        if (p.getAge() < 0 || p.getAge() > 135) {
+            return RegisterResult.INVALID_AGE;
+        }
+        else if (p.getAge() >= 0 && p.getAge() < 18) {
+            return RegisterResult.UNDER_AGE;
+        }
+        //id
+        if(p.getId() <= 0)
+        {
+            return RegisterResult.INVALID_ID;
+        }
+        else if (voters.containsKey(p.getId()))
+        {
+            return RegisterResult.DUPLICATED;
+        }
+        //Gender
+        if(p.getGender() != Gender.FEMALE && p.getGender() != Gender.MALE && p.getGender() != Gender.UNIDENTIFIED)
+        {
+            return RegisterResult.UNDERAGE;
+        }
+
+        voters.put(p.getId(),p);
+
+        return RegisterResult.VALID;
+    }
+
+    public RegisterResult validId(Person _p)
+    {
+        if(_p.getId() <= 0)
+        {
+            return RegisterResult.INVALID_ID;
+        }
+        return RegisterResult.VALID;
+    }
+    public RegisterResult duplicateId(Person _p1, Person _p2)
+    {
+        if(this.validId(_p1) == RegisterResult.VALID &&
+           this.validId(_p2) == RegisterResult.VALID )
+        {
+            if (_p1.getId() == _p2.getId()) {
+                return RegisterResult.DUPLICATED;
+            }
+        }
+        return RegisterResult.VALID;
+    }
+
+    public RegisterResult isAlive(Person _p){
+        if(_p.isAlive()){
+            return RegisterResult.VALID;
+        }
+        return RegisterResult.DEAD;
+    }
+
+    public RegisterResult registerAge (Person _p)
+    {
+        RegisterResult registerResult = RegisterResult.VALID ;
+
+        if( _p.getAge() >= 0 && _p.getAge() < 18)
+        {
+            registerResult = RegisterResult.UNDER_AGE;
+        }
+        else  if(_p.getAge() < 0)
+        {
+            registerResult = RegisterResult.INVALID_AGE;
+        }
+        else  if(_p.getAge() > 135)
+        {
+            registerResult = RegisterResult.INVALID_AGE;
+        }
+        return registerResult;
+    }
+
+
+}
+```
 
 
 
