@@ -1,16 +1,46 @@
 package edu.eci.cvds.tdd.registry;
+
+import java.util.HashMap;
+
 public class Registry {
-    public RegisterResult registerVoter(Person p) {
+    private HashMap<Integer,Person> voters;
+
+    public Registry()
+    {
+        voters = new HashMap<Integer,Person>();
+    }
+
+    public RegisterResult registerVoter(Person p)
+    {
         // TODO Validate person and return real result.
+        //Alive
         if (!p.isAlive()) {
             return RegisterResult.DEAD;
         }
+        //Age
         if (p.getAge() < 0 || p.getAge() > 135) {
             return RegisterResult.INVALID_AGE;
         }
-        if (p.getAge() > 0 && p.getAge() < 18) {
+        else if (p.getAge() >= 0 && p.getAge() < 18) {
             return RegisterResult.UNDER_AGE;
         }
+        //id
+        if(p.getId() <= 0)
+        {
+            return RegisterResult.INVALID_ID;
+        }
+        else if (voters.containsKey(p.getId()))
+        {
+            return RegisterResult.DUPLICATED;
+        }
+        //Gender
+        if(p.getGender() != Gender.FEMALE && p.getGender() != Gender.MALE && p.getGender() != Gender.UNIDENTIFIED)
+        {
+            return RegisterResult.UNDERAGE;
+        }
+
+        voters.put(p.getId(),p);
+
         return RegisterResult.VALID;
     }
 
